@@ -3,6 +3,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.IO;
+
 
 namespace EmpaticaBLEClient
 {
@@ -211,6 +213,14 @@ namespace EmpaticaBLEClient
             if(sensor_type[0] == "E4_Acc")
             {
                 Console.WriteLine("ACC JAA");
+                var csv = new CsvHelper(textWriter);
+                csv.WriteHeader<MyClass>();
+                csv.WriteHeader(Type type);
+                csv.NextRecord();
+                var record = new MyClass { Id = 1, Name = "one" };
+                CsvHelper.WriteRecord(record);
+                CsvHelper.NextRecord();
+
                 //Write ACC to csv
             }
             else if(sensor_type[0] == "E4_Bvp")
