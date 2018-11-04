@@ -23,6 +23,7 @@ namespace EmpaticaBLEClient
 
             AsynchronousClient.StartClient();
 
+
             Console.ReadKey();
         }
     }
