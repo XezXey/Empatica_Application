@@ -14,9 +14,23 @@ namespace EmpaticaBLEClient
     public static class AsynchronousClient
     {
         // Global variable of filename.
-        private static string filename = @"tmp.csv";    // Just initial filename because it need to be declare. But it will change later anyway.
+        private static string filename = DateTime.Now.ToString(@"_yyyy-MM-ddThh:mm:ssTZD") + ".csv";    // Just initial filename because it need to be declare. But it will change later anyway.
 
-        private static TextWriter textWriter = File.CreateText(filename);
+
+        //Gloabal filestream to write csv file
+        private static TextWriter textWriter_acc;
+        private static TextWriter textWriter_bvp;
+        private static TextWriter textWriter_ibi;
+        private static TextWriter textWriter_battery;
+        private static TextWriter textWriter_temp;
+        private static TextWriter textWriter_gsr;
+        private static TextWriter textWriter_hr;
+        private static TextWriter textWriter_tag;
+        private static List<TextWriter> all_textWriter = new List<TextWriter>(new TextWriter[]
+        {
+            textWriter_acc, textWriter_bvp, textWriter_ibi, textWriter_battery, textWriter_temp,
+            textWriter_gsr, textWriter_hr, textWriter_tag
+        });
 
         // The port number for the remote device.
         private const string ServerAddress = "127.0.0.1";
@@ -26,6 +40,19 @@ namespace EmpaticaBLEClient
         private static readonly ManualResetEvent ConnectDone = new ManualResetEvent(false);
         private static readonly ManualResetEvent SendDone = new ManualResetEvent(false);
         private static readonly ManualResetEvent ReceiveDone = new ManualResetEvent(false);
+
+        // To store all data 
+        private static List<Bvp> bvp_list = new List<Bvp>();
+        private static List<Acc> acc_list = new List<Acc>();
+        private static List<Ibi> ibi_list = new List<Ibi>();
+        private static List<Gsr> gsr_list = new List<Gsr>();
+        private static List<Temp> temp_list = new List<Temp>();
+        private static List<Heartbeat> hr_list = new List<Heartbeat>();
+        private static List<Tag> tag_list = new List<Tag>();
+        private static List<BatteryLevel> battery_list = new List<BatteryLevel>();
+
+        // To store all writing function
+        private static List<Action> functions = new List<Action>();
 
         // The response from the remote device.
         private static String _response = String.Empty;
@@ -72,70 +99,68 @@ namespace EmpaticaBLEClient
             public string time { get; set; }    //Time that take tag signal on device.
         }
 
-        static void WriteCsvFile_ACC(IEnumerable<Acc> each_value)
+
+
+        static void WriteCsvFile_ACC(IEnumerable<Acc> acc_all_records)
         {
-            var csvWriter = new CsvWriter(textWriter);
-            textWriter = File.CreateText("Acc" + filename);
-            csvWriter.WriteRecords(each_value);
-            csvWriter.NextRecord();
+            textWriter_acc = File.CreateText("Acc" + filename);
+            var csvWriter = new CsvWriter(textWriter_acc);
+            csvWriter.WriteRecords(acc_all_records);
         }
-        static void WriteCsvFile_BVP(IEnumerable<Bvp> each_value)
+        static void WriteCsvFile_BVP(IEnumerable<Bvp> bvp_all_records)
         {
-            var csvWriter = new CsvWriter(textWriter);
-            textWriter = File.CreateText("Bvp" + filename);
-            csvWriter.WriteRecords(each_value);
-            csvWriter.NextRecord();
+            textWriter_bvp = File.CreateText("Bvp" + filename);
+            var csvWriter = new CsvWriter(textWriter_bvp);
+            csvWriter.WriteRecords(bvp_all_records);
         }
    
-        static void WriteCsvFile_GSR(IEnumerable<Gsr> each_value)
+        static void WriteCsvFile_GSR(IEnumerable<Gsr> gsr_all_records)
         {
-            var csvWriter = new CsvWriter(textWriter);
-            textWriter = File.CreateText("Gsr" + filename);
-            csvWriter.WriteRecords(each_value);
-            csvWriter.NextRecord();
+            var csvWriter = new CsvWriter(textWriter_gsr);
+            textWriter_gsr = File.CreateText("Gsr" + filename);
+            csvWriter.WriteRecords(gsr_all_records);
         }
-        static void WriteCsvFile_IBI(IEnumerable<Ibi> each_value)
+        static void WriteCsvFile_IBI(IEnumerable<Ibi> ibi_all_records)
         {
-            var csvWriter = new CsvWriter(textWriter);
-            textWriter = File.CreateText("Ibi" + filename);
-            csvWriter.WriteRecords(each_value);
-            csvWriter.NextRecord();
+            textWriter_ibi = File.CreateText("Ibi" + filename);
+            var csvWriter = new CsvWriter(textWriter_ibi);
+            csvWriter.WriteRecords(ibi_all_records);
         }
-        static void WriteCsvFile_TAG(IEnumerable<Tag> each_value)
+        static void WriteCsvFile_TAG(IEnumerable<Tag> tag_all_records)
         {
-            var csvWriter = new CsvWriter(textWriter);
-            textWriter = File.CreateText("Tag" + filename);
-            csvWriter.WriteRecords(each_value);
-            csvWriter.NextRecord();
+            textWriter_tag = File.CreateText("Tag" + filename);
+            var csvWriter = new CsvWriter(textWriter_tag);
+            csvWriter.WriteRecords(tag_all_records);
         }
-        static void WriteCsvFile_TEMP(IEnumerable<Temp> each_value)
+        static void WriteCsvFile_TEMP(IEnumerable<Temp> temp_all_records)
         {
-            var csvWriter = new CsvWriter(textWriter);
-            textWriter = File.CreateText("Temp" + filename);
-            csvWriter.WriteRecords(each_value);
-            csvWriter.NextRecord();
+            textWriter_temp = File.CreateText("Temp" + filename);
+            var csvWriter = new CsvWriter(textWriter_temp);
+            csvWriter.WriteRecords(temp_all_records);
         }
-        static void WriteCsvFile_BATTERY(IEnumerable<BatteryLevel> each_value)
+        static void WriteCsvFile_BATTERY(IEnumerable<BatteryLevel> battery_all_records)
         {
-            var csvWriter = new CsvWriter(textWriter);
-            textWriter = File.CreateText("BatteryLevel" + filename);
-            csvWriter.WriteRecords(each_value);
-            csvWriter.NextRecord();
+            textWriter_battery = File.CreateText("BatteryLevel" + filename);
+            var csvWriter = new CsvWriter(textWriter_battery);
+            csvWriter.WriteRecords(battery_all_records);
         }
-        static void WriteCsvFile_HR(IEnumerable<Heartbeat> each_value)
+        static void WriteCsvFile_HR(IEnumerable<Heartbeat> heartbeat_all_records)
         {
-            var csvWriter = new CsvWriter(textWriter);
-            textWriter = File.CreateText("Heartbeat" + filename);
-            csvWriter.WriteRecords(each_value);
-            csvWriter.NextRecord();
+            textWriter_hr = File.CreateText("Heartbeat" + filename);
+            var csvWriter = new CsvWriter(textWriter_hr);
+            csvWriter.WriteRecords(heartbeat_all_records);
         }
-
-
+/*
         private static void OnTimedEvent(object source, ElapsedEventArgs e)
         {
+            foreach (TextWriter each_textWriter in all_textWriter)
+            {
+                each_textWriter.Close();
+
+            }
             filename = DateTime.Now.ToString("yyyy-MM-ddThh:mm:ssTZD");
-            textWriter.Close();
         }
+ */
 
         public static void StartClient()
         {
@@ -167,12 +192,13 @@ namespace EmpaticaBLEClient
                 // Infinite loop to take user's commands.
                 while (true)
                 {
+                    /*
                     // Set timer every 30 sec to stop writing an old file and start a new one.
                     System.Timers.Timer aTimer = new System.Timers.Timer();
                     aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
                     aTimer.Interval = 31000;
                     aTimer.Enabled = true;
-
+                    */
                     Console.Write("Enter your command : ");
                     var msg = Console.ReadLine();   // Store a command from a user.
                     if (msg == "subscribe_all")
@@ -200,6 +226,28 @@ namespace EmpaticaBLEClient
                             ReceiveDone.WaitOne();
                             Thread.Sleep(100);  //Delay 100ms to protect the response message use as command message.
                         }
+                    }
+                    else if (msg == "device_stop")
+                    {
+                        Console.WriteLine("Write and End...");
+                        
+                        //Stop and writing all file
+                        WriteCsvFile_ACC(acc_list);
+                        WriteCsvFile_BVP(bvp_list);
+                        WriteCsvFile_GSR(gsr_list);
+                        WriteCsvFile_HR(hr_list);
+                        WriteCsvFile_IBI(ibi_list);
+                        WriteCsvFile_TAG(tag_list);
+                        WriteCsvFile_TEMP(temp_list);
+                        WriteCsvFile_BATTERY(battery_list);
+
+                        foreach (TextWriter each_textWriter in all_textWriter)
+                        {
+                            each_textWriter.Close();
+                        }
+                        Console.WriteLine("Close all files");
+                        Console.WriteLine("Exiting...");
+                        System.Environment.Exit(1);
                     }
                     else
                     {
@@ -337,80 +385,68 @@ namespace EmpaticaBLEClient
             {
                 //Write Acc to csv
                 Console.WriteLine("This is ACC.");
-                List<Acc> acc_list = new List<Acc>() {
-                    new  Acc() {
+                Acc each_acc = new Acc() {
                         time = sensor_type[1],
                         ax = Convert.ToInt32(sensor_type[2]),
                         ay = Convert.ToInt32(sensor_type[2]),
                         az = Convert.ToInt32(sensor_type[2])
-                    }
-                };
-                WriteCsvFile_ACC(acc_list);   // Write each record to .csv file stream.
+                    };
+                acc_list.Add(each_acc);
             }
 
             else if(sensor_type[0] == "E4_Bvp")
             {
                 //Write Bvp to csv
                 Console.WriteLine("This is BVP.");
-                List<Bvp> bvp_list = new List<Bvp>() {
-                    new  Bvp() {
+                Bvp each_bvp = new  Bvp() {
                         time = sensor_type[1],
                         bvp = Convert.ToSingle(sensor_type[2])
-                    }
                 };
-                WriteCsvFile_BVP(bvp_list);   // Write each record to .csv file stream.
+                bvp_list.Add(each_bvp);   // Write each record to .csv file stream.
             }
 
             else if (sensor_type[0] == "E4_Gsr")
             {
                 //Write Gsr to csv
                 Console.WriteLine("This is GSR.");
-                List<Gsr> gsr_list = new List<Gsr>() {
-                    new  Gsr() {
+                Gsr each_gsr = new  Gsr() {
                         time = sensor_type[1],
                         gsr = Convert.ToSingle(sensor_type[2]),
-                    }
                 };
-                WriteCsvFile_GSR(gsr_list);   // Write each record to .csv file stream.
+                gsr_list.Add(each_gsr);   // Write each record to .csv file stream.
             }
 
             else if (sensor_type[0] == "E4_Temp")
             {
                 //Write Temp to csv
                 Console.WriteLine("This is TEMP.");
-                List<Temp> tmp_list = new List<Temp>() {
-                    new  Temp() {
+                Temp each_temp = new  Temp() {
                         time = sensor_type[1],
                         tmp = Convert.ToSingle(sensor_type[2])
-                    }
                 };
-                WriteCsvFile_TEMP(tmp_list);   // Write each record to .csv file stream.
+                temp_list.Add(each_temp);   // Write each record to .csv file stream.
             }
 
             else if (sensor_type[0] == "E4_Ibi")
             {                
                 //Write Ibi to csv
                 Console.WriteLine("This is IBI.");
-                List<Ibi> ibi_list = new List<Ibi>() {
-                    new  Ibi() {
+                Ibi each_ibi = new Ibi() {
                         time = sensor_type[1],
                         ibi = Convert.ToSingle(sensor_type[2])
-                    }
                 };
-                WriteCsvFile_IBI(ibi_list);   // Write each record to .csv file stream.
+                ibi_list.Add(each_ibi);   // Write each record to .csv file stream.
             }
 
             else if (sensor_type[0] == "E4_Hr")
             {
                 //Write Hr to csv
                 Console.WriteLine("This is HR.");
-                List<Heartbeat> hr_list = new List<Heartbeat>() {
-                    new  Heartbeat() {
+                Heartbeat each_hr = new  Heartbeat() {
                         time = sensor_type[1],
                         hr = Convert.ToSingle(sensor_type[2])
-                    }
                 };
-                WriteCsvFile_HR(hr_list);   // Write each record to .csv file stream.
+                hr_list.Add(each_hr);   // Write each record to .csv file stream.
             }
 
             else if (sensor_type[0] == "E4_Battery")
@@ -418,25 +454,21 @@ namespace EmpaticaBLEClient
                 //Write Batter to csv
                 Console.WriteLine("This is BATTERYLEVEL.");
 
-                List<BatteryLevel> battery_list = new List<BatteryLevel>() {
-                    new  BatteryLevel() {
+                BatteryLevel each_battery = new  BatteryLevel() {
                         time = sensor_type[1],
                         battery = Convert.ToSingle(sensor_type[2])
-                    }
                 };
-                WriteCsvFile_BATTERY(battery_list);   // Write each record to .csv file stream.
+                battery_list.Add(each_battery);   // Write each record to .csv file stream.
             }
 
             else if (sensor_type[0] == "E4_Tag")
             {
                 //Write Tag to csv
                 Console.WriteLine("This is TAG.");
-                List<Tag> tag_list = new List<Tag>() {
-                    new  Tag() {
+                Tag each_tag = new  Tag() {
                         time = sensor_type[1],
-                    }
                 };
-                WriteCsvFile_TAG(tag_list);   // Write each record to .csv file stream.
+                tag_list.Add(each_tag);   // Write each record to .csv file stream.
             }
         }
     }
