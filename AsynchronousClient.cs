@@ -14,7 +14,8 @@ namespace EmpaticaBLEClient
     public static class AsynchronousClient
     {
         // Global variable of filename.
-        private static string filename = DateTime.Now.ToString(@"_yyyy-MM-ddThh:mm:ssTZD") + ".csv";    // Just initial filename because it need to be declare. But it will change later anyway.
+        private static string time_filename = DateTime.Now.ToString("_yyyy-MM-dd_THH_mm_sszzz").Replace(':', '_');
+        private static string filename = time_filename + ".csv";    // Just initial filename because it need to be declare. But it will change later anyway.
 
 
         //Gloabal filestream to write csv file
@@ -26,11 +27,7 @@ namespace EmpaticaBLEClient
         private static TextWriter textWriter_gsr;
         private static TextWriter textWriter_hr;
         private static TextWriter textWriter_tag;
-        private static List<TextWriter> all_textWriter = new List<TextWriter>(new TextWriter[]
-        {
-            textWriter_acc, textWriter_bvp, textWriter_ibi, textWriter_battery, textWriter_temp,
-            textWriter_gsr, textWriter_hr, textWriter_tag
-        });
+
 
         // The port number for the remote device.
         private const string ServerAddress = "127.0.0.1";
@@ -50,9 +47,6 @@ namespace EmpaticaBLEClient
         private static List<Heartbeat> hr_list = new List<Heartbeat>();
         private static List<Tag> tag_list = new List<Tag>();
         private static List<BatteryLevel> battery_list = new List<BatteryLevel>();
-
-        // To store all writing function
-        private static List<Action> functions = new List<Action>();
 
         // The response from the remote device.
         private static String _response = String.Empty;
@@ -104,51 +98,59 @@ namespace EmpaticaBLEClient
         static void WriteCsvFile_ACC(IEnumerable<Acc> acc_all_records)
         {
             textWriter_acc = File.CreateText("Acc" + filename);
-            var csvWriter = new CsvWriter(textWriter_acc);
-            csvWriter.WriteRecords(acc_all_records);
+            var csvWriter_acc = new CsvWriter(textWriter_acc);
+            csvWriter_acc.WriteRecords(acc_all_records);
+            textWriter_acc.Close();
         }
         static void WriteCsvFile_BVP(IEnumerable<Bvp> bvp_all_records)
         {
             textWriter_bvp = File.CreateText("Bvp" + filename);
-            var csvWriter = new CsvWriter(textWriter_bvp);
-            csvWriter.WriteRecords(bvp_all_records);
+            var csvWriter_bvp = new CsvWriter(textWriter_bvp);
+            csvWriter_bvp.WriteRecords(bvp_all_records);
+            textWriter_bvp.Close();
         }
    
         static void WriteCsvFile_GSR(IEnumerable<Gsr> gsr_all_records)
         {
-            var csvWriter = new CsvWriter(textWriter_gsr);
             textWriter_gsr = File.CreateText("Gsr" + filename);
-            csvWriter.WriteRecords(gsr_all_records);
+            var csvWriter_gsr = new CsvWriter(textWriter_gsr);
+            csvWriter_gsr.WriteRecords(gsr_all_records);
+            textWriter_gsr.Close();
         }
         static void WriteCsvFile_IBI(IEnumerable<Ibi> ibi_all_records)
         {
             textWriter_ibi = File.CreateText("Ibi" + filename);
-            var csvWriter = new CsvWriter(textWriter_ibi);
-            csvWriter.WriteRecords(ibi_all_records);
+            var csvWriter_ibi = new CsvWriter(textWriter_ibi);
+            csvWriter_ibi.WriteRecords(ibi_all_records);
+            textWriter_ibi.Close();
         }
         static void WriteCsvFile_TAG(IEnumerable<Tag> tag_all_records)
         {
             textWriter_tag = File.CreateText("Tag" + filename);
-            var csvWriter = new CsvWriter(textWriter_tag);
-            csvWriter.WriteRecords(tag_all_records);
+            var csvWriter_tag = new CsvWriter(textWriter_tag);
+            csvWriter_tag.WriteRecords(tag_all_records);
+            textWriter_tag.Close();
         }
         static void WriteCsvFile_TEMP(IEnumerable<Temp> temp_all_records)
         {
             textWriter_temp = File.CreateText("Temp" + filename);
-            var csvWriter = new CsvWriter(textWriter_temp);
-            csvWriter.WriteRecords(temp_all_records);
+            var csvWriter_temp = new CsvWriter(textWriter_temp);
+            csvWriter_temp.WriteRecords(temp_all_records);
+            textWriter_temp.Close();
         }
         static void WriteCsvFile_BATTERY(IEnumerable<BatteryLevel> battery_all_records)
         {
             textWriter_battery = File.CreateText("BatteryLevel" + filename);
-            var csvWriter = new CsvWriter(textWriter_battery);
-            csvWriter.WriteRecords(battery_all_records);
+            var csvWriter_battery = new CsvWriter(textWriter_battery);
+            csvWriter_battery.WriteRecords(battery_all_records);
+            textWriter_battery.Close();
         }
         static void WriteCsvFile_HR(IEnumerable<Heartbeat> heartbeat_all_records)
         {
             textWriter_hr = File.CreateText("Heartbeat" + filename);
-            var csvWriter = new CsvWriter(textWriter_hr);
-            csvWriter.WriteRecords(heartbeat_all_records);
+            var csvWriter_hr = new CsvWriter(textWriter_hr);
+            csvWriter_hr.WriteRecords(heartbeat_all_records);
+            textWriter_hr.Close();
         }
 /*
         private static void OnTimedEvent(object source, ElapsedEventArgs e)
@@ -188,6 +190,7 @@ namespace EmpaticaBLEClient
                 SendDone.WaitOne();
                 Receive(client);
                 ReceiveDone.WaitOne();
+                Console.WriteLine("Done!");
 
                 // Infinite loop to take user's commands.
                 while (true)
@@ -211,7 +214,7 @@ namespace EmpaticaBLEClient
                             SendDone.WaitOne();
                             Receive(client);
                             ReceiveDone.WaitOne();
-                            Thread.Sleep(100);  //Delay 100ms to protect the response message use as command message.
+                            Thread.Sleep(300);  //Delay 100ms to protect the response message use as command message.
                         }
                     }
                     else if (msg == "unsubscribe_all")
@@ -233,18 +236,30 @@ namespace EmpaticaBLEClient
                         
                         //Stop and writing all file
                         WriteCsvFile_ACC(acc_list);
-                        WriteCsvFile_BVP(bvp_list);
-                        WriteCsvFile_GSR(gsr_list);
-                        WriteCsvFile_HR(hr_list);
-                        WriteCsvFile_IBI(ibi_list);
-                        WriteCsvFile_TAG(tag_list);
-                        WriteCsvFile_TEMP(temp_list);
-                        WriteCsvFile_BATTERY(battery_list);
+                        Console.WriteLine("Write Acc...");
 
-                        foreach (TextWriter each_textWriter in all_textWriter)
-                        {
-                            each_textWriter.Close();
-                        }
+                        WriteCsvFile_BVP(bvp_list);
+                        Console.WriteLine("Write Bvp...");
+
+                        WriteCsvFile_GSR(gsr_list);
+                        Console.WriteLine("Write Gsr...");
+
+                        WriteCsvFile_HR(hr_list);
+                        Console.WriteLine("Write ...");
+
+                        WriteCsvFile_IBI(ibi_list);
+                        Console.WriteLine("Write Ibi...");
+
+                        WriteCsvFile_TAG(tag_list);
+                        Console.WriteLine("Write Tag...");
+
+                        WriteCsvFile_TEMP(temp_list);
+                        Console.WriteLine("Write Temp...");
+
+                        WriteCsvFile_BATTERY(battery_list);
+                        Console.WriteLine("Write Battery...");
+
+
                         Console.WriteLine("Close all files");
                         Console.WriteLine("Exiting...");
                         System.Environment.Exit(1);
@@ -378,13 +393,13 @@ namespace EmpaticaBLEClient
         // Called everytime that have response from EmpaticaBLEServer   
         private static void HandleResponseFromEmpaticaBLEServer(string response)
         {
-            Console.Write(response);
+            //Console.Write(response);
             string[] sensor_type = response.Split(' ');
 
             if (sensor_type[0] == "E4_Acc")
             {
                 //Write Acc to csv
-                Console.WriteLine("This is ACC.");
+                //Console.WriteLine("This is ACC.");
                 Acc each_acc = new Acc() {
                         time = sensor_type[1],
                         ax = Convert.ToInt32(sensor_type[2]),
@@ -397,7 +412,7 @@ namespace EmpaticaBLEClient
             else if(sensor_type[0] == "E4_Bvp")
             {
                 //Write Bvp to csv
-                Console.WriteLine("This is BVP.");
+                //Console.WriteLine("This is BVP.");
                 Bvp each_bvp = new  Bvp() {
                         time = sensor_type[1],
                         bvp = Convert.ToSingle(sensor_type[2])
@@ -408,7 +423,7 @@ namespace EmpaticaBLEClient
             else if (sensor_type[0] == "E4_Gsr")
             {
                 //Write Gsr to csv
-                Console.WriteLine("This is GSR.");
+                //Console.WriteLine("This is GSR.");
                 Gsr each_gsr = new  Gsr() {
                         time = sensor_type[1],
                         gsr = Convert.ToSingle(sensor_type[2]),
@@ -416,10 +431,10 @@ namespace EmpaticaBLEClient
                 gsr_list.Add(each_gsr);   // Write each record to .csv file stream.
             }
 
-            else if (sensor_type[0] == "E4_Temp")
+            else if (sensor_type[0] == "E4_Temperature")
             {
                 //Write Temp to csv
-                Console.WriteLine("This is TEMP.");
+                //Console.WriteLine("This is TEMP.");
                 Temp each_temp = new  Temp() {
                         time = sensor_type[1],
                         tmp = Convert.ToSingle(sensor_type[2])
@@ -430,7 +445,7 @@ namespace EmpaticaBLEClient
             else if (sensor_type[0] == "E4_Ibi")
             {                
                 //Write Ibi to csv
-                Console.WriteLine("This is IBI.");
+                //Console.WriteLine("This is IBI.");
                 Ibi each_ibi = new Ibi() {
                         time = sensor_type[1],
                         ibi = Convert.ToSingle(sensor_type[2])
@@ -441,7 +456,7 @@ namespace EmpaticaBLEClient
             else if (sensor_type[0] == "E4_Hr")
             {
                 //Write Hr to csv
-                Console.WriteLine("This is HR.");
+                //Console.WriteLine("This is HR.");
                 Heartbeat each_hr = new  Heartbeat() {
                         time = sensor_type[1],
                         hr = Convert.ToSingle(sensor_type[2])
@@ -452,7 +467,7 @@ namespace EmpaticaBLEClient
             else if (sensor_type[0] == "E4_Battery")
             {                
                 //Write Batter to csv
-                Console.WriteLine("This is BATTERYLEVEL.");
+                //Console.WriteLine("This is BATTERYLEVEL.");
 
                 BatteryLevel each_battery = new  BatteryLevel() {
                         time = sensor_type[1],
@@ -464,7 +479,7 @@ namespace EmpaticaBLEClient
             else if (sensor_type[0] == "E4_Tag")
             {
                 //Write Tag to csv
-                Console.WriteLine("This is TAG.");
+                //Console.WriteLine("This is TAG.");
                 Tag each_tag = new  Tag() {
                         time = sensor_type[1],
                 };
