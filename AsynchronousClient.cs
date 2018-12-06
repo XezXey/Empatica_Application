@@ -53,44 +53,52 @@ namespace EmpaticaBLEClient
         
         internal class Acc
         {
-            public string time { get; set; }
+            public string timefromempt { get; set; }
+            public string timestamp { get; set; }
             public int ax { get; set; }
             public int ay { get; set; }
             public int az { get; set; }
         }
         internal class Bvp
         {
-            public string time { get; set; }
+            public string timefromempt { get; set; }
+            public string timestamp { get; set; }
             public float bvp { get; set; }
         }
         internal class Gsr
         {
-            public string time { get; set; }
+            public string timefromempt { get; set; }
+            public string timestamp { get; set; }
             public float gsr { get; set; }
         }
         internal class Temp
         {
-            public string time { get; set; }
+            public string timefromempt { get; set; }
+            public string timestamp { get; set; }
             public float tmp { get; set; }
         }
         internal class Ibi
         {
-            public string time { get; set; }
+            public string timefromempt { get; set; }
+            public string timestamp { get; set; }
             public float ibi { get; set; }
         }
         internal class Heartbeat
         {
-            public string time { get; set; }
+            public string timefromempt { get; set; }
+            public string timestamp { get; set; }
             public float hr { get; set; }
         }
         internal class BatteryLevel
         {
-            public string time { get; set; }
+            public string timefromempt { get; set; }
+            public string timestamp { get; set; }
             public float battery { get; set; }
         }
         internal class Tag
         {
-            public string time { get; set; }    //Time that take tag signal on device.
+            public string timefromempt { get; set; }
+            public string timestamp { get; set; }
         }
 
 
@@ -166,6 +174,8 @@ namespace EmpaticaBLEClient
 
         public static void StartClient()
         {
+            Console.WriteLine(DateTime.Now.ToString("_yyyy-MM-dd_THH_mm_sszzz").Replace(':', '_'));
+            Console.WriteLine(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
             // Create the command string for taking sensor input.
             string[] subscribe_str = { "acc", "bvp", "gsr", "ibi", "tmp", "bat", "tag" };
             // Connect to a remote device.
@@ -401,10 +411,11 @@ namespace EmpaticaBLEClient
                 //Write Acc to csv
                 //Console.WriteLine("This is ACC.");
                 Acc each_acc = new Acc() {
-                        time = sensor_type[1],
-                        ax = Convert.ToInt32(sensor_type[2]),
-                        ay = Convert.ToInt32(sensor_type[2]),
-                        az = Convert.ToInt32(sensor_type[2])
+                    timefromempt = sensor_type[1],
+                    timestamp = (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString(),
+                    ax = Convert.ToInt32(sensor_type[2]),
+                    ay = Convert.ToInt32(sensor_type[2]),
+                    az = Convert.ToInt32(sensor_type[2])
                     };
                 acc_list.Add(each_acc);
             }
@@ -414,8 +425,9 @@ namespace EmpaticaBLEClient
                 //Write Bvp to csv
                 //Console.WriteLine("This is BVP.");
                 Bvp each_bvp = new  Bvp() {
-                        time = sensor_type[1],
-                        bvp = Convert.ToSingle(sensor_type[2])
+                    timefromempt = sensor_type[1],
+                    timestamp = (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString(),
+                    bvp = Convert.ToSingle(sensor_type[2])
                 };
                 bvp_list.Add(each_bvp);   // Write each record to .csv file stream.
             }
@@ -425,8 +437,9 @@ namespace EmpaticaBLEClient
                 //Write Gsr to csv
                 //Console.WriteLine("This is GSR.");
                 Gsr each_gsr = new  Gsr() {
-                        time = sensor_type[1],
-                        gsr = Convert.ToSingle(sensor_type[2]),
+                    timefromempt = sensor_type[1],
+                    timestamp = (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString(),
+                    gsr = Convert.ToSingle(sensor_type[2]),
                 };
                 gsr_list.Add(each_gsr);   // Write each record to .csv file stream.
             }
@@ -436,8 +449,9 @@ namespace EmpaticaBLEClient
                 //Write Temp to csv
                 //Console.WriteLine("This is TEMP.");
                 Temp each_temp = new  Temp() {
-                        time = sensor_type[1],
-                        tmp = Convert.ToSingle(sensor_type[2])
+                    timefromempt = sensor_type[1],
+                    timestamp = (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString(),
+                    tmp = Convert.ToSingle(sensor_type[2])
                 };
                 temp_list.Add(each_temp);   // Write each record to .csv file stream.
             }
@@ -447,8 +461,9 @@ namespace EmpaticaBLEClient
                 //Write Ibi to csv
                 //Console.WriteLine("This is IBI.");
                 Ibi each_ibi = new Ibi() {
-                        time = sensor_type[1],
-                        ibi = Convert.ToSingle(sensor_type[2])
+                    timefromempt = sensor_type[1],
+                    timestamp = (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString(),
+                    ibi = Convert.ToSingle(sensor_type[2])
                 };
                 ibi_list.Add(each_ibi);   // Write each record to .csv file stream.
             }
@@ -458,8 +473,9 @@ namespace EmpaticaBLEClient
                 //Write Hr to csv
                 //Console.WriteLine("This is HR.");
                 Heartbeat each_hr = new  Heartbeat() {
-                        time = sensor_type[1],
-                        hr = Convert.ToSingle(sensor_type[2])
+                    timefromempt = sensor_type[1],
+                    timestamp = (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString(),
+                    hr = Convert.ToSingle(sensor_type[2])
                 };
                 hr_list.Add(each_hr);   // Write each record to .csv file stream.
             }
@@ -470,8 +486,9 @@ namespace EmpaticaBLEClient
                 //Console.WriteLine("This is BATTERYLEVEL.");
 
                 BatteryLevel each_battery = new  BatteryLevel() {
-                        time = sensor_type[1],
-                        battery = Convert.ToSingle(sensor_type[2])
+                    timefromempt = sensor_type[1],
+                    timestamp = (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString(),
+                    battery = Convert.ToSingle(sensor_type[2])
                 };
                 battery_list.Add(each_battery);   // Write each record to .csv file stream.
             }
@@ -481,7 +498,8 @@ namespace EmpaticaBLEClient
                 //Write Tag to csv
                 //Console.WriteLine("This is TAG.");
                 Tag each_tag = new  Tag() {
-                        time = sensor_type[1],
+                    timefromempt = sensor_type[1],
+                    timestamp = (DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds).ToString(),
                 };
                 tag_list.Add(each_tag);   // Write each record to .csv file stream.
             }
