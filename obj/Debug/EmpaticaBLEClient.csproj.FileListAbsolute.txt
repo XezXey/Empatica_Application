@@ -1,0 +1,16 @@
+C:\Users\brainvistec\Desktop\Empatica_listwrite\Empatica_Application-master\bin\Debug\EmpaticaBLEClient.exe.config
+C:\Users\brainvistec\Desktop\Empatica_listwrite\Empatica_Application-master\bin\Debug\EmpaticaBLEClient.exe
+C:\Users\brainvistec\Desktop\Empatica_listwrite\Empatica_Application-master\bin\Debug\EmpaticaBLEClient.pdb
+C:\Users\brainvistec\Desktop\Empatica_listwrite\Empatica_Application-master\bin\Debug\CsvHelper.dll
+C:\Users\brainvistec\Desktop\Empatica_listwrite\Empatica_Application-master\bin\Debug\Microsoft.CSharp.dll
+C:\Users\brainvistec\Desktop\Empatica_listwrite\Empatica_Application-master\bin\Debug\System.Data.DataSetExtensions.dll
+C:\Users\brainvistec\Desktop\Empatica_listwrite\Empatica_Application-master\bin\Debug\System.Data.dll
+C:\Users\brainvistec\Desktop\Empatica_listwrite\Empatica_Application-master\bin\Debug\System.dll
+C:\Users\brainvistec\Desktop\Empatica_listwrite\Empatica_Application-master\bin\Debug\System.Xml.dll
+C:\Users\brainvistec\Desktop\Empatica_listwrite\Empatica_Application-master\bin\Debug\System.Xml.Linq.dll
+C:\Users\brainvistec\Desktop\Empatica_listwrite\Empatica_Application-master\bin\Debug\CsvHelper.xml
+C:\Users\brainvistec\Desktop\Empatica_listwrite\Empatica_Application-master\obj\Debug\EmpaticaBLEClient.csprojAssemblyReference.cache
+C:\Users\brainvistec\Desktop\Empatica_listwrite\Empatica_Application-master\obj\Debug\EmpaticaBLEClient.csproj.CoreCompileInputs.cache
+C:\Users\brainvistec\Desktop\Empatica_listwrite\Empatica_Application-master\obj\Debug\EmpaticaBLEClient.csproj.CopyComplete
+C:\Users\brainvistec\Desktop\Empatica_listwrite\Empatica_Application-master\obj\Debug\EmpaticaBLEClient.exe
+C:\Users\brainvistec\Desktop\Empatica_listwrite\Empatica_Application-master\obj\Debug\EmpaticaBLEClient.pdb
